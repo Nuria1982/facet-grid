@@ -1,9 +1,3 @@
-scales_y <- list(
-  `mean_co2` = scale_y_continuous(limits = c(0, 250), breaks = seq(0, 250, 50)),
-  `mean_temp` = scale_y_continuous(limits = c(0, 30), breaks = seq(0, 30, 5)),
-  `mean_wfps` = scale_y_continuous(limits = c(0, 70), breaks = seq(0, 70, 10))
-)
-
 var.labs <- c("Soil respiration 
 (mg CO2 - C m-2 h-1)
 ", "Soil temperature (°C)
@@ -48,9 +42,9 @@ season1_1 %>%
         legend.title = element_blank()) +
   facetted_pos_scales(
     y = list(
-      var == "co2" ~ scale_y_continuous(limits = c(0,250),
-      var == "temp" ~ scale_y_continuous(limits = c(0,30))),
+      var == "co2" ~ scale_y_continuous(limits = c(0,250)),
+      var == "temp" ~ scale_y_continuous(limits = c(0,30)),
       var == "wfps" ~ scale_y_reverse(limits = c(0,80))
-    )
-  ) +
-  ggsave("Season2",)
+    )) +
+  ggsave("Season2.png", dpi = "print", limitsize = FALSE, width = 200, height =150, units = "mm")
+ 
