@@ -1,0 +1,56 @@
+scales_y <- list(
+  `mean_co2` = scale_y_continuous(limits = c(0, 250), breaks = seq(0, 250, 50)),
+  `mean_temp` = scale_y_continuous(limits = c(0, 30), breaks = seq(0, 30, 5)),
+  `mean_wfps` = scale_y_continuous(limits = c(0, 70), breaks = seq(0, 70, 10))
+)
+
+var.labs <- c("Soil respiration 
+(mg CO2 - C m-2 h-1)
+", "Soil temperature (°C)
+", "WFPS (%)
+")
+
+names(var.labs) <- c("co2", "temp", "wfps")
+
+dat_text <- data.frame(
+  label = c("emergence"),
+  var.labs   = c("Soil respiration (mg CO2 - C m-2 h-1)
+                 "),
+  x     = c(20),
+  y     = c(4))
+
+season1_1 %>%   
+  pivot_longer(
+    cols= co2:wfps,
+    names_to = "var",
+    values_to = "val") %>% 
+  ggplot() +
+  aes(x = DAE, y = val, col = Trat.)+
+  facet_grid(var ~ ., switch = "y", scales = "free_y", labeller = labeller(var = var.labs)) + 
+  geom_point(size = 0.8, aes(color = Trat.)) +
+  scale_colour_manual(values=c(HD="black",LD="black"))+
+  geom_line(aes(linetype = Trat.), stat = "summary", fun=mean) +
+  stat_summary(fun="mean", geom="point", size=1)+
+  stat_summary(fun.data = mean_se, geom = "errorbar", width=1)+
+  theme(panel.spacing = unit(0, "cm", data = NULL))+ 
+  theme_bw(base_family=12) +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
+  theme(strip.placement = "outside", strip.text = element_text(family = "TT Times New Roman", face = "bold", size = 10),
+        strip.background = element_rect(fill="transparent")) +
+  labs(title = "b) Season 2", x="Days after emergence", y="", color = "") +
+  theme(plot.title = element_text(family = "TT Times New Roman", face = "bold", size = 10, hjust = 0, vjust = 0),
+        axis.title.x = element_text(family = "TT Times New Roman", face = "bold", size = 10),
+        axis.title.y = element_text(family = "TT Times New Roman", face = "bold", size = 10),
+        legend.position = c(0.9, 1.03),
+        legend.background = element_rect(fill = "transparent",colour = "transparent"),
+        legend.key.size = unit(0.4, units = "cm"),
+        legend.text = element_text(family = "TT Times New Roman", face = "bold", size = 10),
+        legend.title = element_blank()) +
+  facetted_pos_scales(
+    y = list(
+      var == "co2" ~ scale_y_continuous(limits = c(0,250),
+      var == "temp" ~ scale_y_continuous(limits = c(0,30))),
+      var == "wfps" ~ scale_y_reverse(limits = c(0,80))
+    )
+  ) +
+  ggsave("Season2",)
